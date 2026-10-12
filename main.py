@@ -119,23 +119,45 @@ if __name__ == "__main__":
 
                     print(f"\nFetching albums for {selected_artist.get('name')}...")
                     album_data = get_artist_album(artist_mbid)
-
+                    # added a feature if artists have more than a few albums
+                    # press 'm' for more
+                    # acts as if youre clicking "see more"
                     if isinstance(album_data, dict):
                         albums = album_data.get("release-groups", [])
                         if not albums:
                             print("No albums found for this artist.")
                         else:
-                            print(f"\nAlbums by {selected_artist.get('name')}:\n")
-                            top_albums = albums[:5]
-                            for idx, album in enumerate(top_albums, start=1):
-                                title = album.get("title", "Unknown Title")
-                                date = album.get("first-release-date", "Unknown Date")
-                                print(f"{idx}. {title} ({date})")
+                            print(f"\nAlbums by {selected_artist.get('name')} ({len(albums)} total found):\n")
+                            
+                            page_size = 7
+                            current_index = 0
+                            album_choice = None
 
-                            album_choice = input("\nSelect an album number to see the tracklist: ").strip()
+                            while current_index < len(albums):
+                                batch_albums = albums[current_index : current_index + page_size]
+                            
+                                
+                                print(f"--- Albums ({current_index + 1} to {current_index + len(batch_albums)}) ---")
+                                for idx, album in enumerate(batch_albums, start=1):
+                                    title = album.get("title", "Unknown Title")
+                                    date = album.get("first-release-date", "Unknown Date")
+                                    print(f"{idx}. {title} ({date})")
 
-                            if album_choice.isdigit() and 1 <= int(album_choice) <= len(top_albums):
-                                selected_album = top_albums[int(album_choice) - 1]
+                                if current_index + page_size < len(albums):
+                                    action = input("\nType 'm' to show more results: ")
+                                    if action == 'm':
+                                        current_index += page_size
+                                        print()
+                                        continue
+                                    else:
+                                        album_choice = action
+                                        break
+                                else:
+                                    album_choice = input("\nSelect an album number to see the tracklist: ")
+                                    break
+                            
+                            if album_choice.isdigit() and 1 <= int(album_choice) <= len(batch_albums):
+                                selected_album = batch_albums[int(album_choice) - 1]
                                 album_mbid = selected_album.get('id')
 
                                 print(f"\nFetching tracks for '{selected_album.get('title')}'...")
