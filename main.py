@@ -156,8 +156,8 @@ if __name__ == "__main__":
                                     album_choice = input("\nSelect an album number to see the tracklist: ")
                                     break
                             
-                            if album_choice.isdigit() and 1 <= int(album_choice) <= len(batch_albums):
-                                selected_album = batch_albums[int(album_choice) - 1]
+                            if album_choice.isdigit() and 1 <= int(album_choice) <= len(albums):
+                                selected_album = albums[int(album_choice) - 1]
                                 album_mbid = selected_album.get('id')
 
                                 print(f"\nFetching tracks for '{selected_album.get('title')}'...")
@@ -165,6 +165,7 @@ if __name__ == "__main__":
 
                                 if isinstance(tracks, list) and tracks:
                                     print(f"\n--- Tracklist ---")
+                                    tracklist_lines = []
                                     for track in tracks:
                                         title = track.get("title", "Unknown Title")
                                         number = track.get("number", "?")
@@ -178,9 +179,21 @@ if __name__ == "__main__":
                                         else:
                                             time_str = "(Unknown length)"
                                             
-                                        print(f"{number}. {title} {time_str}")
-                                else:
-                                    print("No tracks found or error retrieving tracklist.")
+                                        #print(f"{number}. {title} {time_str}")
+                                        line = f"{number}. {title} {time_str}"
+                                        print(line)
+                                        tracklist_lines.append(line)
+                                
+
+                                save_choice = input("\nWould you like to save this tracklist to a file? (y/n): ").strip().lower()
+                                if save_choice == 'y':
+                                    filename = f"{selected_album.get('title', 'album')}_tracks.txt".replace("/", "-")
+                                    with open(filename, "w") as f:
+                                        f.write(f"Tracklist for {selected_album.get('title')}\n\n")
+                                        for line in tracklist_lines:
+                                            f.write(line + "\n")
+                                    print(f"Successfully saved to {filename}!")
+
                             else:
                                 print("Invalid album selection.")
                     else:
