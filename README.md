@@ -32,3 +32,11 @@ But after that the only issue was the while loop, the fix was to get everything 
 Another issue I had was working on the see more feature. It is supposed to act when user presses m it shows another page of the albums. At first it would just show the same page if you clicked m
 
 The fix was to remove my "top_albums = [:7]" and leave change it to batch_albums which allows the page to show 7 albums at a time on a page
+
+Another issue was when i added the save tracklist as a text file, it wouldnt display the tracklist
+But i fixed it by actually printing out the track list in the file using the append feature
+
+## Added Features
+
+I added a feature that allows the user to save the track list as a text file
+
